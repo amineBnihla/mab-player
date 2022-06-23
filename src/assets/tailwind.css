@@ -1,0 +1,32 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@layer base{
+    body{
+        overflow-x:hidden;
+    }
+body::-webkit-scrollbar {
+        width: 0.8rem;
+    }
+
+    body::-webkit-scrollbar-track {
+        background-color: hsl(318, 71%, 80%);
+        border-radius: 20px;
+        margin-block:10px;
+        
+    }
+    
+    body::-webkit-scrollbar-thumb {
+        border-radius: 20px;
+        border:2px solid hsl(318, 71%, 80%);
+        background: linear-gradient(45deg, hsl(263, 51%, 59%), hsl(318, 65%, 62%));
+    }
+    @supports(scrollbar-color: red blue){
+        *{
+            scrollbar-color:hsl(318, 71%, 80%) hsl(263, 51%, 59%);
+        }
+    }
+}
