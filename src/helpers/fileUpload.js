@@ -1,11 +1,10 @@
-import { storage,db } from "@/firebase/config"
-import {getDoc,doc} from "firebase/firestore"
+import { storage } from "@/firebase/config"
 import {ref,uploadBytes,getDownloadURL,deleteObject} from "firebase/storage"
 
-export async function fileUpload(path,file,id=""){
+export async function fileUpload(path,file,oldFile=""){
   try{
-    if(id !== ""){
- await deleteFile(id);
+    if(oldFile !== ""){
+ await deleteFile(oldFile);
   }
  const storageRef = ref(storage,`${path}/${file.name}`)
   let snapshot = await  uploadBytes(storageRef,file)
@@ -17,20 +16,10 @@ export async function fileUpload(path,file,id=""){
   
        
 }
-export async function  deleteFile(id){
+export async function  deleteFile(oldFile){
   try{
-      const docSnapshot = await  getDoc(doc(db,"playlists",id))
-      console.log(id,docSnapshot.data().image)
-      
-   /* await getDownloadURL(ref(storage,docSnapshot.data().image))
-   .then(()=>{
-  console.log('right')
-   }).catch((err)=>{
-    console.log(err)
-   })
-    */
-   const prevRef = ref(storage,docSnapshot.data().image)
-   console.log(prevRef)
+
+   const prevRef = ref(storage,oldFile)
   await deleteObject(prevRef)
   }catch(err){
     if(err.message.includes("(storage/object-not-found)")){

@@ -24,19 +24,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import BarChart from "@/components/charts/BarChart";
 import AreaChart from "@/components/charts/AreaChart";
 import InsightsCard from "@/components/admin/InsightCards.vue";
 import MapView from "@/components/maps/MapView.vue";
-export default {
-  components: {
-    BarChart,
-    InsightsCard,
-    AreaChart,
-    MapView,
-  },
-};
+import { onMounted } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
+onMounted(() => {
+  store.dispatch("statistics/videos_count");
+});
 </script>
 
 <style>

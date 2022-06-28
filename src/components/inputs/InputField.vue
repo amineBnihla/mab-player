@@ -1,13 +1,9 @@
 <script setup>
-import { computed, defineEmits, defineProps, useAttrs } from "vue";
+import { computed, defineEmits, defineProps } from "vue";
 const props = defineProps(["modelValue"]);
 defineEmits(["update:modelValue"]);
 const focused = computed(() => (props.modelValue.length > 0 ? true : false));
-
-const attrs = useAttrs();
-console.log(attrs.type);
 </script>
-
 <template>
   <div class="relative">
     <input
@@ -31,10 +27,11 @@ console.log(attrs.type);
         peer-focus:text-slate-600
         peer-focus:-top-4
         peer-focus:left-0
+        peer-focus:text-xs
         peer-focus:font-semibold
         duration-500
       "
-      :class="{ '-top-4 left-0 font-semibold text-slate-600': focused }"
+      :class="{ '-top-4 left-0 font-semibold text-slate-600 text-xs': focused }"
       >{{ $attrs.label }}</label
     >
   </div>

@@ -22,6 +22,7 @@
       <Transition name="overlayTransition">
         <div
           v-if="showSidebarOverlay"
+          @click="showSidebar = !showSidebar"
           class="
             sidebar_overlay
             z-[5]
@@ -33,7 +34,11 @@
         ></div>
       </Transition>
 
-      <SidebarView class="duration-700 z-30" :class="toggleSideBar" />
+      <SidebarView
+        class="duration-700 z-30"
+        @click="showSidebar = !showSidebar"
+        :class="toggleSideBar"
+      />
       <div class="main relative duration-500 py-10" :class="toggleContent">
         <div class="container">
           <router-view></router-view>
@@ -85,11 +90,10 @@ window.addEventListener("resize", function () {
 <style scoped>
 .overlayTransition-enter-active,
 .overlayTransition-leave-active {
-  transition: 500ms;
+  transition: 100ms;
 }
 .overlayTransition-enter-from,
 .overlayTransition-enter-to {
   opacity: 0;
-  transform: translateX(-200px);
 }
 </style>

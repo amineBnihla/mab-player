@@ -4,8 +4,6 @@ import {db} from "@/firebase/config"
 import {fileUpload,deleteFile} from "@/helpers/fileUpload"
 
 
-
-let playlistCollection = collection(db,'playlists');
 const state = () =>({
 playlists:[]
 })
@@ -19,38 +17,37 @@ const mutations = {
         data = data.map((video)=>{
             return {id:video.id,...video.snippet}
         })
-        console.log(data)
         state.videos = data
     },
  
 }
-async function checkImage(image){
+async function checkImage(image,oldImage){
       if(typeof image != "string"){
-        image =  await fileUpload('playlist',image)
+        image =  await fileUpload('playlist',image,oldImage)
       }
       return image
 }
 const actions={
-  async  addPlaylist(_,data){
-      try{
+  async  addPlaylist({rootState},data){
+    try{
         const downloadURL = await checkImage(data.image)
-        console.log(downloadURL)
- addDoc(playlistCollection,{
+ addDoc(collection(doc(db,"users",rootState.auth.user.uid),'playlists'),{
   title:data.title,
   description:data.description,
   image:`${downloadURL}`
 })
    }catch(err){
+
         throw new Error('Something went wrong')
    }
    
      
     },
-  async  updatePlaylist(_,data){
+  async  updatePlaylist({rootState},data){
      try{
-       let downloadURL = await checkImage(data.image)
-        console.log(data)
-       updateDoc(doc(db,'playlists',data.id),{
+       let downloadURL = await checkImage(data.image,data.oldImage)
+    
+       updateDoc(doc(collection(doc(db,"users",rootState.auth.user.uid),'playlists'),data.id),{
         title:data.title,
         description:data.description,
         image:`${downloadURL}`
@@ -60,10 +57,13 @@ const actions={
      }
       
     },
-  async deletePlylist(_,id){
+  async deletePlylist({rootState},id){
+    const user_uid = rootState.auth.user.uid
     try{
-     await deleteFile(id);
-      await deleteDoc(doc(db,'playlists',id))
+      const docSnapshot = await  getDoc(doc(collection(doc(db,"users",user_uid),'playlists'),id))
+      
+     await deleteFile(docSnapshot.data().image);
+      await deleteDoc(doc(collection(doc(db,"users",user_uid),'playlists'),id))
     }catch(err){
         throw new Error('Something went wrong')
     }
@@ -71,17 +71,17 @@ const actions={
    
     },
  
-     fetch_playlists({state}){
-   return new Promise((resolve,reject)=>{
-   onSnapshot(playlistCollection,(snapshot)=>{
-            snapshot.docChanges().forEach((change)=>{
+     fetch_playlists({state,rootState}){
+   return new Promise((resolve)=>{
+   onSnapshot(collection(doc(db,"users",rootState.auth.user.uid),'playlists'),(snapshot)=>{
+    if(snapshot.size > 0){
+    snapshot.docChanges().forEach((change)=>{
                 if(change.type == "added"){
-                    console.log(change)
                   const playlist = state.playlists.find((playlist)=>playlist.id==change.doc.id)
                   if(!playlist){
                     state.playlists.push({id:change.doc.id,...change.doc.data()})
                   } 
-                  resolve('added')
+               
                 }else if(change.type == "modified"){
                   state.playlists = state.playlists.map((playlist)=>{
                     if(playlist.id == change.doc.id){
@@ -89,16 +89,14 @@ const actions={
                     }
                     return playlist
                   })
-                  resolve('modified')
+                 
                 }else if(change.type == "removed"){
                   state.playlists = state.playlists.filter((playlist)=> playlist.id != change.doc.id)
-                  resolve('removed')
+                
                 }
             })
-        },(error)=>{
-            console.log(error)
-            state.errors = error
-            reject(error)
+    }
+           resolve()
         })
 
      }) 
@@ -108,16 +106,13 @@ const actions={
     return playlist
 
 },
-async addVideoToPlaylist(_,{playlistId,video}){
+async addVideoToPlaylist({rootState},{playlistId,video}){
      
-    const docVideo = doc(db,"playlists",playlistId)
+    const docVideo = doc(db,"users",rootState.auth.user.uid,"playlists",playlistId)
     const refVideo = doc(docVideo,"videos",video.id)
   try{
-      console.log(playlistId,video)
     const result = await getDoc(refVideo)
-    console.log(result)
     if(result.exists()){
-        console.log(result.exists())
         return false;
     }
     await  setDoc(refVideo,{
@@ -129,7 +124,6 @@ async addVideoToPlaylist(_,{playlistId,video}){
     return true
     
   }catch(err){
-     console.log(err)
     throw new Error('something went wrong')
   }
  

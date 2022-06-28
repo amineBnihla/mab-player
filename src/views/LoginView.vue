@@ -2,8 +2,8 @@
   <div class="min-h-screen flex justify-center items-center">
     <div
       class="
-        w-11/12
-        md:w-4/5
+        w-[900px]
+        max-w-[90%]
         min-h-[500px]
         flex flex-col
         md:flex-row
@@ -363,75 +363,90 @@
           bg-gradient-to-tr
           from-primary
           to-secondary
-          grid
-          place-items-center
         "
       >
-        <form
+        <div
           class="
-            relative
-            py-10
+            absolute
+            inset-8
+            py-5
             px-3
-            w-10/12
-            max-w-[90%]
             bg-white bg-opacity-30
             rounded-xl
             backdrop-blur
-            grid
-            place-items-center
           "
-          @submit.prevent="login"
         >
-          <div class="login flex flex-col gap-9 w-3/4">
-            <div>
-              <InputField
-                type="text"
-                label="User Name"
-                id="username"
-                class="rounded-lg"
-                v-model="form.email"
-              />
-              <span
-                v-for="(error, index) in v$.email.$errors"
-                :key="index"
-                class="text-red-600 block"
-                >{{ error.$message }}</span
-              >
-            </div>
+          <h2 class="text-slate-100 w-fit mx-auto text-4xl font-semibold mb-8">
+            Sign In
+          </h2>
+          <form @submit.prevent="login">
+            <div class="login space-y-9">
+              <div class="relative">
+                <InputField
+                  type="text"
+                  label="E-mail"
+                  id="username"
+                  class="rounded-lg"
+                  v-model="form.email"
+                />
+                <span
+                  v-for="(error, index) in v$.email.$errors"
+                  :key="index"
+                  class="text-red-600 block absolute left-0 -bottom-6"
+                  >{{ error.$message }}</span
+                >
+              </div>
 
-            <div>
-              <InputField
-                type="password"
-                label="Password"
-                id="password"
-                class="rounded-lg"
-                v-model="form.password"
-              />
-              <span
-                v-for="(error, index) in v$.password.$errors"
-                :key="index"
-                class="text-red-600 block"
-                >{{ error.$message }}</span
-              >
+              <div class="relative">
+                <InputField
+                  type="password"
+                  label="Password"
+                  id="password"
+                  class="rounded-lg"
+                  v-model="form.password"
+                />
+                <span
+                  v-for="(error, index) in v$.password.$errors"
+                  :key="index"
+                  class="text-red-600 block absolute left-0 -bottom-6"
+                  >{{ error.$message }}</span
+                >
+              </div>
             </div>
-          </div>
-          <div class="w-3/4 flex flex-col gap-5 mt-10">
             <button
               type="submit"
-              class="bg-slate-600 py-3 px-4 text-custom_white"
+              class="
+                bg-slate-600
+                block
+                w-full
+                my-9
+                py-3
+                px-4
+                rounded-lg
+                text-custom_white
+              "
             >
               <LoadingComponent v-if="loading" />
               <span v-else>Sign in</span>
             </button>
-            <SocialButton />
+          </form>
+          <SocialButton />
+          <div class="flex justify-center">
+            <router-link
+              class="
+                text-slate-800
+                py-5
+                inline-block
+                hover:text-slate-700
+                font-medium
+                capitalize
+              "
+              to="/sign-up"
+            >
+              create an account ?
+            </router-link>
           </div>
-        </form>
-        <router-link
-          class="text-slate-50 hover:text-slate-200 capitalize"
-          to="/sign-up"
-        >
-          create a account ?
-        </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -472,9 +487,7 @@ const rules = {
 const v$ = useVuelidate(rules, form);
 let loading = ref(false);
 async function login() {
-  console.log(v$);
   const res = await v$.value.$validate();
-  console.log(res);
   if (res) {
     try {
       loading.value = true;
@@ -483,7 +496,13 @@ async function login() {
       router.push({ name: "dashboard" });
     } catch (err) {
       loading.value = false;
-      store.commit("SHOW_MSG", { message: err.message, type: "error" });
+      if (err.message.includes("(auth/user-not-found)")) {
+        store.commit("SHOW_MSG", { message: "user not found", type: "error" });
+      } else if (err.message.includes("(auth/wrong-password)")) {
+        store.commit("SHOW_MSG", { message: "wrong password", type: "error" });
+      } else if (err.message.includes("(auth/wrong-email)")) {
+        store.commit("SHOW_MSG", { message: "wrong password", type: "error" });
+      }
     }
   }
 }

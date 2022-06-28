@@ -9,21 +9,49 @@
           <img src="../../assets/logo.svg" class="logo w-8" alt="" srcset="" />
         </router-link>
       </div>
-      <div class="header_right">
-        <button class="flex gap-3 group items-center">
-          <img
-            src="../../assets/logo.svg"
-            class="rounded-full w-8"
-            alt="user image"
-          />
-          <span
+      <div class="header_right h-full">
+        <button
+          class="
+            flex
+            gap-3
+            group
+            items-center
+            relative
+            h-full
+            px-2
+            hover:bg-slate-100 hover:bg-opacity-10
+            md:px-4
+            py-1
+          "
+        >
+          <div
             class="
-              bg-slate-100
-              shadow-sm
-              group-focus:rotate-180
               rounded-full
               w-8
               h-8
+              md:w-9 md:h-9
+              relative
+              overflow-hidden
+              bg-slate-100
+            "
+          >
+            <img
+              :src="
+                $store.state.auth.user.photoURL ||
+                '../../assets/profile_user.svg'
+              "
+              class="absolute left-0 top-0 w-full h-full object-cover"
+              alt="user image"
+            />
+          </div>
+          <span class="text-custom_white text-sm md:text-base">
+            {{ $store.state.auth.user.displayName || "" }}
+          </span>
+          <span
+            class="
+              shadow-sm
+              group-focus:rotate-180
+              rounded-full
               grid
               place-items-center
             "
@@ -34,10 +62,10 @@
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              class="fill-custom_white"
             >
               <path
                 d="M12 16C11.7664 16.0005 11.5399 15.9191 11.36 15.77L5.36003 10.77C5.15581 10.6003 5.02739 10.3564 5.00301 10.0919C4.97863 9.8275 5.06029 9.56422 5.23003 9.36C5.39977 9.15578 5.64368 9.02736 5.90811 9.00298C6.17253 8.9786 6.43581 9.06026 6.64003 9.23L12 13.71L17.36 9.39C17.4623 9.30694 17.58 9.2449 17.7064 9.20747C17.8327 9.17004 17.9652 9.15795 18.0962 9.17189C18.2272 9.18582 18.3542 9.22552 18.4699 9.2887C18.5855 9.35187 18.6875 9.43727 18.77 9.54C18.8616 9.64282 18.931 9.76345 18.9738 9.89432C19.0166 10.0252 19.0319 10.1635 19.0187 10.3006C19.0056 10.4376 18.9643 10.5705 18.8974 10.6909C18.8305 10.8112 18.7395 10.9165 18.63 11L12.63 15.83C12.4449 15.9555 12.2231 16.0154 12 16V16Z"
-                fill="#2D3144"
               />
             </svg>
           </span>
@@ -46,17 +74,16 @@
               menu
               absolute
               top-full
-              right-5
+              right-0
               hidden
               group-focus:block
-              rounded-lg
               overflow-hidden
             "
           >
             <li>
-              <router-link
+              <a
+                @click="profileLink"
                 class="px-4 py-2 flex gap-5 bg-slate-100 hover:bg-slate-200"
-                to="/profile"
                 ><svg
                   width="24"
                   height="24"
@@ -69,7 +96,7 @@
                     fill="#2D3144"
                   />
                 </svg>
-                <span>Profile</span></router-link
+                Profile</a
               >
             </li>
             <li>
@@ -115,6 +142,9 @@ async function logout() {
   } catch (error) {
     store.commit("SHOW_MSG", { message: error.message, type: "error" });
   }
+}
+function profileLink() {
+  router.push({ name: "profile" });
 }
 </script>
 

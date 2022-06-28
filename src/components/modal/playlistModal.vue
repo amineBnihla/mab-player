@@ -102,9 +102,10 @@
 
 <script setup>
 import useVuelidate from "@vuelidate/core";
-import { required, alpha, helpers } from "@vuelidate/validators";
+import { required, helpers } from "@vuelidate/validators";
 import InputField from "@/components/inputs/InputField.vue";
 import LoadingComponent from "@/components/loaders/loadingComponent.vue";
+import { onlyString } from "@/helpers/rules";
 import {
   defineProps,
   defineEmits,
@@ -125,11 +126,12 @@ let form = reactive({
   title: "",
   description: "",
   image: require("@/assets/playlist.svg"),
+  oldImage: "",
 });
 const rules = computed(() => ({
   title: {
     required: helpers.withMessage("This Title field cannot be empty", required),
-    alpha: helpers.withMessage("The Title field must be string", alpha),
+    alpha: helpers.withMessage("The Title field must be string", onlyString),
   }, // Matches state.firstName
   description: {
     required: helpers.withMessage(
@@ -140,7 +142,6 @@ const rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(rules, form);
-console.log(v$);
 
 function chooseFile(e) {
   form.image = e.target.files[0];
@@ -166,6 +167,7 @@ async function Add() {
         type: "success",
       });
     } catch (err) {
+      loading.value = false;
       store.commit("SHOW_MSG", { message: err.message, type: "error" });
     }
   }
@@ -178,13 +180,13 @@ async function Update() {
       await store.dispatch("playlists/updatePlaylist", form);
       loading.value = false;
       emit("toggleModal");
-      console.log("cooooolMsg");
       store.commit("SHOW_MSG", {
         message: "Playlist Updated Successfuly",
         type: "success",
       });
     } catch (err) {
       store.commit("SHOW_MSG", { message: err.message, type: "error" });
+      loading.value = false;
     }
   }
 }
@@ -193,17 +195,15 @@ function reset() {
 }
 onMounted(async () => {
   if (props.id) {
-    console.log(props.id);
     const playlist = await store.dispatch(
       "playlists/fetch_playlist_by_id",
       props.id
     );
-    console.log(playlist);
-
     form.id = playlist.id;
     form.title = playlist.title;
     form.description = playlist.description;
     form.image = playlist.image;
+    form.oldImage = playlist.image;
   }
 });
 </script>

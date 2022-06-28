@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black bg-opacity-80 fixed h-screen w-screen z-20"></div>
+  <div class="bg-black bg-opacity-80 fixed h-screen w-screen z-[25]"></div>
 </template>
 
 <script>

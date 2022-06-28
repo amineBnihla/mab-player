@@ -131,7 +131,6 @@ await api
   )
   .then((res) => {
     results.value = res.data.items[0];
-    console.log(results.value);
     results.value.player.embedHtml = results.value.player.embedHtml.replace(
       /(width|height)="\d+"/g,
       "class='w-full aspect-video'"

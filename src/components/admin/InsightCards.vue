@@ -36,46 +36,39 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import AreaSparklineChart from "@/components/charts/AreaSparklineChart.vue";
 import RadialSparklineChart from "@/components/charts/RadialSparklineChart.vue";
 import BarSparklineChart from "@/components/charts/BarSparklineChart.vue";
 import DonutSparklineChart from "@/components/charts/DonutSparklineChart.vue";
-export default {
-  components: {
-    AreaSparklineChart,
-    RadialSparklineChart,
-    BarSparklineChart,
-    DonutSparklineChart,
+import { reactive } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
+
+const insights = reactive([
+  {
+    title: "Playlist",
+    number: store.state.statistics.playlist_count,
+    component: AreaSparklineChart,
   },
-  data() {
-    return {
-      insights: [
-        {
-          title: "Artists",
-          number: 40,
-          component: "AreaSparklineChart",
-        },
-        {
-          title: "Views",
-          number: 140,
-          component: "RadialSparklineChart",
-        },
-        {
-          title: "Sales",
-          number: 160,
-          component: "BarSparklineChart",
-        },
-        {
-          title: "Countries",
-          number: 160,
-          component: "DonutSparklineChart",
-        },
-      ],
-    };
+  {
+    title: "Views",
+    number: 140,
+    component: RadialSparklineChart,
   },
-};
+  {
+    title: "Sales",
+    number: 160,
+    component: BarSparklineChart,
+  },
+  {
+    title: "Countries",
+    number: 160,
+    component: DonutSparklineChart,
+  },
+]);
 </script>
+
 
 <style>
 </style>

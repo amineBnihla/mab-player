@@ -152,7 +152,6 @@ function toggleAddPlaylist() {
 const store = useStore();
 const loading = ref(false);
 async function addVideoToPlaylist(playlistId) {
-  console.log(playlistId, props.video);
   try {
     loading.value = true;
     const result = await store.dispatch("playlists/addVideoToPlaylist", {
@@ -160,7 +159,6 @@ async function addVideoToPlaylist(playlistId) {
       video: props.video,
     });
     loading.value = false;
-    console.log(result);
     if (!result) {
       store.commit("SHOW_MSG", {
         message: "Video already exist in this playlist",
@@ -183,11 +181,8 @@ async function addVideoToPlaylist(playlistId) {
   }
 }
 onMounted(async () => {
-  console.log(props);
   loading.value = true;
-  console.log("start");
   await store.dispatch("playlists/fetch_playlists");
-  console.log("end");
   loading.value = false;
 });
 </script>

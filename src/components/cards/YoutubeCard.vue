@@ -124,7 +124,7 @@ function showModal() {
   if (toggleModal.value) {
     document.body.style.overflow = "hidden";
   } else {
-    document.body.style.overflow = "none";
+    document.body.style.overflow = "auto";
   }
   store.commit("CHANGE_OVERLAY");
 }
@@ -137,10 +137,9 @@ function showAddToList() {
     document.body.style.overflow = "auto";
   }
 }
-async function removeFromList() {
+function removeFromList() {
   showDeleteModal.value = !showDeleteModal.value;
   store.commit("CHANGE_OVERLAY");
-  console.log("hide message del");
 }
 </script>
 

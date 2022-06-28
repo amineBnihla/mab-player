@@ -26,7 +26,7 @@
       v-if="props.type == 'playlist'"
       class="content text-slate-600 dark:text-slate-100"
     >
-      Deleting playlist will delete all video related ti it
+      Deleting playlist will delete all video related to it
     </div>
     <div class="action flex gap-4">
       <button
@@ -57,10 +57,8 @@ const loading = ref(false);
 
 async function deletePlaylist() {
   try {
-    console.log("playlist", props.deleteId);
     loading.value = true;
     await store.dispatch("playlists/deletePlylist", props.deleteId);
-
     emits("toggleModal");
     loading.value = false;
     store.commit("SHOW_MSG", {
@@ -78,9 +76,8 @@ async function deletePlaylist() {
 async function deleteVideo() {
   try {
     loading.value = true;
-    await store.dispatch("videos/deleteVideo", props.deleteId);
-    console.log("deleted");
     emits("toggleModal");
+    await store.dispatch("videos/deleteVideo", props.deleteId);
     loading.value = false;
     store.commit("SHOW_MSG", {
       message: "Video deleted successfuly",

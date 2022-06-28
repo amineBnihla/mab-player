@@ -72,8 +72,6 @@ const store = useStore();
 let results = computed(() => store.getters["videos/videos"]);
 let loading = ref(false);
 async function searchResult() {
-  console.log(search.value);
-
   if (search.value != "") {
     loading.value = true;
     try {

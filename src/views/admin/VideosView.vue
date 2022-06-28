@@ -44,7 +44,6 @@ onMounted(async () => {
   loading.value = false;
 });
 onUnmounted(() => {
-  console.log("onmounted");
   store.commit("videos/RESET_VIDEOS");
 });
 </script>

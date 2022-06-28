@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen grid place-items-center">
+  <div class="min-h-screen flex justify-center items-center">
     <div
       class="
         bg-gradient-to-tr
@@ -10,6 +10,7 @@
         justify-center
         py-5
         min-h-[400px]
+        w-[500px]
         max-w-[90%]
         rounded-lg
         relative
@@ -32,7 +33,7 @@
       >
         <h2 class="text-slate-100 text-4xl font-semibold mb-14">Sign Up</h2>
         <div class="flex w-full flex-col gap-9">
-          <div>
+          <div class="relative">
             <InputField
               type="email"
               label="E-mail"
@@ -43,11 +44,11 @@
             <span
               v-for="(error, index) in v$.email.$errors"
               :key="index"
-              class="text-red-600 block"
+              class="text-red-600 block absolute left-0 -bottom-6"
               >{{ error.$message }}</span
             >
           </div>
-          <div>
+          <div class="relative">
             <InputField
               type="password"
               label="Password"
@@ -56,10 +57,9 @@
               v-model="form.password"
             />
             <span
-              v-for="(error, index) in v$.password.$errors"
-              :key="index"
-              class="text-red-600 block"
-              >{{ error.$message }}</span
+              v-if="v$.password.$errors[0]"
+              class="text-red-600 block absolute left-0 -bottom-6"
+              >{{ v$.password.$errors[0].$message }}</span
             >
           </div>
         </div>
@@ -80,12 +80,18 @@
           <LoadingComponent v-if="loading" />
           <span v-else>Sign up</span>
         </button>
+        <router-link
+          to="/login"
+          class="
+            text-slate-800
+            hover:text-slate-700
+            font-medium
+            mt-10
+            capitalize
+          "
+          >Already have an account?</router-link
+        >
       </form>
-      <router-link
-        to="/login"
-        class="text-slate-100 mt-10 capitalize hover:text-slate-200"
-        >Already have an account</router-link
-      >
     </div>
   </div>
 </template>
@@ -97,6 +103,11 @@ import LoadingComponent from "@/components/loaders/loadingComponent.vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { reactive, ref } from "vue";
+import {
+  passwordNumber,
+  passwordCharachters,
+  passwordSpecialChar,
+} from "@/helpers/rules";
 import { required, helpers, email, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 const router = useRouter();
@@ -112,10 +123,20 @@ const rules = {
   },
   password: {
     required: helpers.withMessage("password is required", required),
-    minLength: helpers.withMessage(
-      "password must be at least 8 characteres",
-      minLength(8)
+    special: helpers.withMessage(
+      "must contain at least one special character - or _",
+      passwordSpecialChar
     ),
+    number: helpers.withMessage(
+      "must contain at least one digit",
+      passwordNumber
+    ),
+    charachter: helpers.withMessage(
+      "must contain alphabet",
+      passwordCharachters
+    ),
+
+    minLength: helpers.withMessage("password must be at least 8", minLength(8)),
   },
 };
 const v$ = useVuelidate(rules, form);

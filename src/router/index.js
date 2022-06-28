@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { auth } from '@/firebase/config'
 import {onAuthStateChanged} from 'firebase/auth'
+import store from "@/store"
 
 const routes = [
   {
@@ -50,6 +51,11 @@ const routes = [
          name:"videos",
          component: ()=> import(/* webpackChunkName: "admin-videos" */"@/views/admin/VideosView.vue"),
        },
+        {
+         path:"profile",
+         name:"profile",
+         component: ()=> import(/* webpackChunkName: "admin-profile" */"@/views/admin/ProfileView.vue"),
+       },
      ]
    }
 ]
@@ -58,6 +64,7 @@ async function getAuthUser (){
   return new Promise((resolve,reject)=>{
    const removeListener =  onAuthStateChanged(auth,(user)=>{
     removeListener(),
+    store.state.auth.user = user;
     resolve(user)
     },reject)
   })

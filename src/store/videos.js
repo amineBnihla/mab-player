@@ -11,7 +11,7 @@ const getters = {
 }
 const mutations = {
      RESET_VIDEOS(state){
-    console.log(state.videos)
+
    state.videos = []
   },
     SET_RESULTS(state,data){
@@ -20,7 +20,6 @@ const mutations = {
             return {id:video.id.videoId,...video.snippet}
         })
 
-        console.log(data)
         state.videos = data
     },
   /*   SET_PLAYLIST(state,playlist){
@@ -28,26 +27,21 @@ const mutations = {
     } */
 }
 const actions={
-    async fetchVideosOfPlaylist({state},playlistId){
+    async fetchVideosOfPlaylist({state,rootState},playlistId){
         state.videos=[]
         try{
 
-            const playlist =  await getDoc(doc(db,"playlists",playlistId))
-            console.log(playlist.data())
+            const playlist =  await getDoc(doc(db,"users",rootState.auth.user.uid,"playlists",playlistId))
             state.playlist = {id:playlist.id,...playlist.data()}
-               const refColl=collection(db,"playlists",playlistId,"videos")
+               const refColl=collection(db,"users",rootState.auth.user.uid,"playlists",playlistId,"videos")
                  onSnapshot(refColl,(snapshot)=>{
                   snapshot.docChanges().forEach((change)=>{
                         if(change.type == "added"){
-                          console.log(change.type)
                           state.videos.push({id:change.doc.id,...change.doc.data()})
                       }else if(change.type == "removed"){
                           state.videos = state.videos.filter((video)=> video.id != change.doc.id)
                       }
                   })
-              },(error)=>{
-                  console.log(error)
-                  state.errors = error
               })
         }catch(err){
             throw new Error("playlist not exests")
@@ -56,19 +50,15 @@ const actions={
     },
 async searchResults({state,commit},query){
      state.videos=[]
-    console.log(query)
    await api.get(`search?part=snippet&maxResults=25&q=${query}&type=video&key=${process.env.VUE_APP_API_KEY}`)
-   .then(({data})=>{
-    
+   .then(({data})=>{ 
      commit('SET_RESULTS',data.items);
    })
 },
-async deleteVideo({state},videoId){
+async deleteVideo({state,rootState},videoId){
     try{
-        console.log(state.playlist.id,videoId)
-        await deleteDoc(doc(db,"playlists",state.playlist.id,"videos",videoId));
+    await deleteDoc(doc(db,"users",rootState.auth.user.uid,"playlists",state.playlist.id,"videos",videoId));
     }catch(err){
-        console.log(err)
      throw new Error(err)
     }
 }

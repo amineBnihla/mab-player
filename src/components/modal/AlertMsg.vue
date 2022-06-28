@@ -5,7 +5,7 @@
       max-w-[90%]
       w-[400px]
       min-h-[300px]
-      z-30
+      z-50
       shadow-md
       rounded-md
       fixed
@@ -28,7 +28,7 @@
     v-else
     class="
       fixed
-      z-30
+      z-50
       top-10
       flex
       gap-5
