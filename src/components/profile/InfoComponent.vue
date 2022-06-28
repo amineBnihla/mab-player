@@ -105,6 +105,7 @@ async function updateInfo() {
 }
 onMounted(() => {
   const user = store.state.auth.user;
+  console.log(user);
   if (user.displayName || user.email) {
     info.name = user.displayName;
     info.email = user.email;

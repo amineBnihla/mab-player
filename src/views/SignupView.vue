@@ -142,9 +142,7 @@ const rules = {
 const v$ = useVuelidate(rules, form);
 let loading = ref(false);
 async function signUp() {
-  console.log(v$);
   const res = await v$.value.$validate();
-  console.log(res);
   if (res) {
     try {
       loading.value = true;

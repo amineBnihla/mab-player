@@ -2,7 +2,9 @@
 import { computed, defineEmits, defineProps } from "vue";
 const props = defineProps(["modelValue"]);
 defineEmits(["update:modelValue"]);
-const focused = computed(() => (props.modelValue.length > 0 ? true : false));
+const focused = computed(() =>
+  props.modelValue && props.modelValue.length > 0 ? true : false
+);
 </script>
 <template>
   <div class="relative">

@@ -38,14 +38,14 @@
             <img
               :src="
                 $store.state.auth.user.photoURL ||
-                '../../assets/profile_user.svg'
+                require('@/assets/profile_user.svg')
               "
               class="absolute left-0 top-0 w-full h-full object-cover"
               alt="user image"
             />
           </div>
           <span class="text-custom_white text-sm md:text-base">
-            {{ $store.state.auth.user.displayName || "" }}
+            {{ name }}
           </span>
           <span
             class="
@@ -132,9 +132,16 @@
 <script setup>
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 
 const store = useStore();
 const router = useRouter();
+const name = computed(() => {
+  return (
+    store.state.auth.user.displayName ||
+    store.state.auth.user.email.split("@")[0]
+  );
+});
 async function logout() {
   try {
     await store.dispatch("auth/sign_out");

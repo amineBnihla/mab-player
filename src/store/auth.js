@@ -17,12 +17,9 @@ const actions ={
      try {
       const res = await signInWithEmailAndPassword(auth, email, password)
         if(res.user){
-            console.log(res)
-            console.log(res.user)
             state.user = res.user
         }
      } catch (error) {
-           console.log(error.message)
         throw new Error(error)
      }
     },
@@ -31,12 +28,9 @@ async sign_up({state},{email,password}){
 
         const res = await createUserWithEmailAndPassword(auth,email,password)
         if(res.user){
-            console.log(res)
-            console.log(res.user)
             state.user = res.user
         }
     }catch(err){
-        console.log(err.message)
         throw new Error(err)
     }
 
@@ -60,12 +54,8 @@ async reAuthenticate(_,password){
 async google_auth(){
     const provider = new GoogleAuthProvider();
 try {
-
-   const result = await signInWithPopup(auth, provider);
-    console.log(result)
-    
+ await signInWithPopup(auth, provider);    
 } catch (error) {
-    console.log(error.message)
     throw new Error(error)
 }
 }
