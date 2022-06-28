@@ -1,17 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { auth } from '@/firebase/config'
 import {onAuthStateChanged} from 'firebase/auth'
 import store from "@/store"
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
+
    {
-     path:"/login",
+     path:"/",
      name:'login',
      meta:{
       requiresAuth:false
@@ -78,7 +73,7 @@ router.beforeEach(async (to,from,next)=>{
    if(await getAuthUser()){
     next()
    }else{
-    next('/login')
+    next('/')
    }
   }else if(!to.meta.requiresAuth){
     if(await getAuthUser()){

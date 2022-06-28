@@ -81,7 +81,7 @@
           <span v-else>Sign up</span>
         </button>
         <router-link
-          to="/login"
+          to="/"
           class="
             text-slate-800
             hover:text-slate-700
